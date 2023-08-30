@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "spot_price_function" {
   filename      = "get_spot_price.zip"
-  function_name = "getSpotPrice"
+  function_name = "getSpotPrice-${random_pet.lambda.id}"
   role          = aws_iam_role.lambda_execution.arn
   handler       = "get_spot_price.lambda_handler"
   runtime       = "python3.8"
@@ -11,7 +11,7 @@ resource "aws_lambda_function" "spot_price_function" {
     }
   }
 
-  depends_on = [null_resource.python_script]
+  depends_on = [null_resource.python_script, random_pet.lambda]
 }
 
 resource "random_pet" "lambda" {
