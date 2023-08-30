@@ -14,6 +14,9 @@ resource "aws_lambda_function" "spot_price_function" {
   depends_on = [null_resource.python_script]
 }
 
+resource "random_pet" "lambda" {
+}
+
 resource "null_resource" "python_script" {
   triggers = {
     always_run = timestamp()
@@ -25,7 +28,7 @@ resource "null_resource" "python_script" {
 }
 
 resource "aws_iam_policy" "lambda_execution_policy" {
-  name = "LambdaExecutionPolicy"
+  name = "LambdaExecutionPolicy-${random_pet.lambda.id}"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -40,7 +43,7 @@ resource "aws_iam_policy" "lambda_execution_policy" {
 }
 
 resource "aws_iam_role" "lambda_execution" {
-  name = "lambda_execution_role"
+  name = "lambda_execution_role-${random_pet.lambda.id}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -57,7 +60,7 @@ resource "aws_iam_role" "lambda_execution" {
 }
 
 resource "aws_iam_policy_attachment" "lambda_execution_attachment" {
-  name       = "lambda_execution_attachment"
+  name       = "lambda_execution_attachment-${random_pet.lambda.id}"
   policy_arn = aws_iam_policy.lambda_execution_policy.arn
   roles      = [aws_iam_role.lambda_execution.name]
 }
